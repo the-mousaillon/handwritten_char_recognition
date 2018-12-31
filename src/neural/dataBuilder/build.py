@@ -1,8 +1,7 @@
 import pandas as pd
 import cv2
 import numpy as np
-
-root = "src/neural/dataBuilder"
+from sklearn.preprocessing import normalize
 
 def lettreGenerator():
     iniLettre = 64
@@ -18,10 +17,10 @@ def lettreGenerator():
 
 def loadAllPath():
     pathDf = pd.DataFrame(columns=["path", "sample"])
-    f = open("../trainingData/goodSample/Hnd/all.txt")
+    f = open("src/neural/trainingData/goodSample/Hnd/all.txt")
     for l in f:
         sample = str(int(l.split("/")[1].strip("Sample")))
-        pathDf = pathDf.append({"path": l.strip("\n"), "sample": int(sample)}, ignore_index=True,)
+        pathDf = pathDf.append({"path": l.strip("\n"), "sample": int(sample)}, ignore_index=True)
     return pathDf
 
 
@@ -32,9 +31,15 @@ def loadAllImg():
     for ind in gene:
         pathList = pathDf.loc[pathDf["sample"] == ind["sample"]]["path"].values
         for path in pathList:
-            img = cv2.imread("../trainingData/goodSample/Hnd/" + path, 0)
+            img = cv2.imread("src/neural/trainingData/goodSample/Hnd/" + path, 0)
             img = cv2.resize(img,(28,28))
-            imNF = img.flatten()
-            imNF = (imNF - imNF.mean())/ imNF.var()
-            df = df.append({"image": img, "im_norm_flat": imNF, "lettre": ind["lettre"]}, ignore_index=True,)
+            imNF = normalize(img, axis=1)
+            imNF = imNF.flatten()
+            df = df.append({"image": img, "im_norm_flat": imNF, "lettre": ind["lettre"]}, ignore_index=True)
     return df
+
+
+def makeData():
+    df = loadAllImg()
+    df.to_json("src/neural/trainingData/processed.json")
+
