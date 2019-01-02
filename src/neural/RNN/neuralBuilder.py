@@ -7,7 +7,8 @@ from keras.layers import Dense, Activation, Flatten
 
 dataset = pd.read_json("src/neural/trainingData/processed.json")
 
-dataset = dataset.sample(frac=1)
+#dataset = dataset.sample(frac=1)
+dataset = dataset.sort_values("normLettre", ascending=1)
 
 dataset["im_norm_flat"] = dataset["im_norm_flat"].apply(lambda x: np.asarray(x))
 dataset["image"] = dataset["image"].apply(lambda x: np.asarray(x)) 
@@ -19,6 +20,7 @@ x_train = np.asarray([x for x in x_train])
 y_train = dataset["normLettre"].values
 
 model = Sequential([
+    Dense(784, activation='relu'),
     Dense(128, activation='relu'),
     Dense(128, activation='relu'),
     Dense(36, activation='softmax'),
@@ -29,7 +31,7 @@ model.compile(optimizer="adam",
               loss="sparse_categorical_crossentropy",
               metrics=["accuracy"])
 
-model.fit(x_train, y_train, epochs=18)
+model.fit(x_train, y_train, validation_split=0.33, epochs=10)
 
 model.save("src/neural/RNN/model/hand_written_recognition.model")
 

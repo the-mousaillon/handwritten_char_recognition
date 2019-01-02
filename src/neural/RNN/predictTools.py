@@ -29,5 +29,6 @@ def predict_lettre(model, img):
     data = data.flatten()
     print(data)
     pred = model.predict([[data]]).argmax()
+    print(model.predict([[data]]))
     print("argmax : ", pred)
     return list(gene)[pred]["lettre"]
