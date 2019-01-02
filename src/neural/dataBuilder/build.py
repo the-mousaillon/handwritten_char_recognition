@@ -15,6 +15,16 @@ def lettreGenerator():
             yield {"lettre": chr(iniLettre), "sample": i}
 
 
+def inverseLettre(l):
+    gene = lettreGenerator()
+    i = 0
+    for w in gene:
+        if w["lettre"] == l:
+            return i
+        i+=1
+    return i
+
+
 def loadAllPath():
     pathDf = pd.DataFrame(columns=["path", "sample"])
     f = open("src/neural/trainingData/goodSample/Hnd/all.txt")
@@ -25,7 +35,7 @@ def loadAllPath():
 
 
 def loadAllImg():
-    df = pd.DataFrame(columns=["image", "im_norm_flat", "lettre"])
+    df = pd.DataFrame(columns=["image", "im_norm_flat", "normLettre", "lettre"])
     pathDf = loadAllPath()
     gene = lettreGenerator()
     for ind in gene:
@@ -35,7 +45,7 @@ def loadAllImg():
             img = cv2.resize(img,(28,28))
             imNF = normalize(img, axis=1)
             imNF = imNF.flatten()
-            df = df.append({"image": img, "im_norm_flat": imNF, "lettre": ind["lettre"]}, ignore_index=True)
+            df = df.append({"image": img, "im_norm_flat": imNF, "normLettre": inverseLettre(str(ind["lettre"])), "lettre": ind["lettre"]}, ignore_index=True)
     return df
 
 
