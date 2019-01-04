@@ -54,7 +54,7 @@ class CalculateChunk():
         l = x.split(",")[0]
         img = convertImg(x[len(l)+1:])
         l = int(l)
-        dic = {"img" : img, "sparse_lettre": l, "imgNF": normalize(img, axis=1).flatten(), "lettre": get_lettre(l)}
+        dic = {"img" : img, "sparse_lettre": l, "imgNF": normalize(img, axis=1), "lettre": get_lettre(l)}
         self.processed = self.processed.append(dic, ignore_index=True)
         return None
 
