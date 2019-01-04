@@ -7,17 +7,13 @@ from sklearn.preprocessing import normalize
 # src/neural/trainingData/testHdn/7.png
 
 def lettreGenerator():
-    iniLettre = 64
-    for i in range(1,63):
-        if i == 37:
-            iniLettre = 65
-            yield {"lettre": chr(iniLettre), "sample": i}
-        elif i < 11:
-            yield {"lettre": str(i-1), "sample": i}
-        else:
-            iniLettre+=1
-            yield {"lettre": chr(iniLettre), "sample": i}
+    iniLettre = 65
+    for i in range(26):
+        yield chr(iniLettre + i)
 
+def predict(model):
+    im = cv2.imread("src/neural/trainingData/testHuman/A.png", 0)
+    return predict_lettre(model, im)
 
 def predict_lettre(model, img):
     gene = lettreGenerator()
@@ -31,4 +27,4 @@ def predict_lettre(model, img):
     pred = model.predict([[data]]).argmax()
     print(model.predict([[data]]))
     print("argmax : ", pred)
-    return list(gene)[pred]["lettre"]
+    return list(gene)[pred]

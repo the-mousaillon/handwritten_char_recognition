@@ -1,8 +1,6 @@
 import pandas as pd
-import cv2
 import numpy as np
 from sklearn.preprocessing import normalize
-import matplotlib.pyplot as plt
 from multiprocessing import Pool
 import time
 
@@ -72,7 +70,7 @@ def makeChunk(df, n):
     chunkList = []
     a = 0
     b = 0
-    for i in range(n-1):
+    for _ in range(n-1):
         b = a + fractile
         chunkList += [df.loc[a:b]]
         a = b+1
@@ -88,24 +86,24 @@ def runWorkers(df, nb):
     chunkList = [CalculateChunk(chunkList[i], i+1) for i in range(len(chunkList))]
     results = [pool.apply_async(run, args=(x,)) for x in chunkList]
     results = [p.get() for p in results]
-    return pd.concat(results)
+    return results
 
 def main():
-    data = pd.read_csv("src/neural/trainingData/bigCsvSample/A_Z Handwritten Data.csv", sep='\n')
+    data = pd.read_csv("src/neural/trainingData/kaggle/A_Z Handwritten Data.csv", sep='\n')
     print("début de la construction ...")
     start = time.time()
     print("--> début à : ", start)
-    df = runWorkers(data, 50)
+    dfList = runWorkers(data, 50)
     end = time.time()
     print("--> fin à : ", end)
     hours, rem = divmod(end-start, 3600)
     minutes, seconds = divmod(rem, 60)
     print("--> dataset construit en : {:0>2}:{:0>2}:{:05.2f}".format(int(hours),int(minutes),seconds))
     print("finished building dataset !!!")
-    return df
+    return dfList
 
 if __name__ == "__main__":
-    df = main()
-    df = df.reset_index(drop=True)
-    df.to_json("src/neural/trainingData/processedKaggle.json")
+    dfList = main()
+    for i in range(len(dfList)):
+        dfList[i].to_json("src/neural/trainingData/processedKaggle" + str(i) + ".json")
 # ipython -m src.neural.dataBuilder.buildKaggleV2
