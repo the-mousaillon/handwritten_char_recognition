@@ -22,9 +22,20 @@ def predict_lettre(model, img):
     data = normalize(data, axis=1)
     plt.imshow(data, cmap=plt.cm.binary)
     plt.show()
-    data = data.flatten()
-    print(data)
-    pred = model.predict([[data]]).argmax()
-    print(model.predict([[data]]))
+    fig, ax = plt.subplots()
+    data = np.reshape(data, (28,28,1))
+    # data = data.flatten()
+    print(data.shape)
+    pred = model.predict([[data]])[0]
+    labels = list(gene)
+    proba = ax.bar(np.arange(26), pred,
+                alpha=0.4, color='r',
+                label='Prédictions')
+
+    ax.set_xticks(np.arange(26))
+    ax.set_xticklabels(labels)
     print("argmax : ", pred)
-    return list(gene)[pred]
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+    return labels[pred.argmax()]
