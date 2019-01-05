@@ -5,18 +5,15 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Dropout, Conv2D
 import src.neural.dataLoader.loadKaggle as bdd
 from keras.callbacks import TensorBoard
+from src.neural.dataLoader.loadKaggleV3 import trainingGenerator, loadTestData
+
+# à utiliser avec la base de donnée kaggleV3 (src.neural.dataBuilder.buildKaggleV3)
 
 def buildModel():
-    dataset = bdd.loadAll()
-
     # the tensorboard callBack 
+    test = loadTestData()
+    trainingG = trainingGenerator()
     tbCallBack = TensorBoard(log_dir='./Graph', histogram_freq=0, write_graph=True, write_images=True)
-
-    x_train = np.array([x for x in dataset["imgNF"].values])
-    sampleSize, n, m = x_train.shape
-    x_train = x_train.reshape(sampleSize, n, m, 1)
-
-    y_train = dataset["sparse_lettre"].values
 
     model = Sequential([
         Conv2D(filters=128,kernel_size=[3,3],activation="relu", input_shape=(28, 28, 1)),
@@ -33,7 +30,7 @@ def buildModel():
                 loss="sparse_categorical_crossentropy",
                 metrics=["accuracy"])
 
-    model.fit(x_train, y_train, validation_split=0.05, epochs=10, callbacks=[tbCallBack])
+    model.fit_generator(trainingG, epochs=4, validation_data=test, use_multiprocessing=True, workers=4, callbacks=[tbCallBack])
     return model
 
 def saveModel(model):
