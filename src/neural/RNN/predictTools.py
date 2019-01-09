@@ -34,8 +34,8 @@ def predict_lettre(model, img):
 
     ax.set_xticks(np.arange(26))
     ax.set_xticklabels(labels)
-    print("argmax : ", pred)
     ax.legend()
     fig.tight_layout()
     plt.show()
+    print("C'est un ", labels[pred.argmax()] , ", j'en suis sur à ", str(pred[pred.argmax()]*100)[:4], "% !!!")
     return labels[pred.argmax()]
