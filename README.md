@@ -1,7 +1,7 @@
 # handwritten_char_recognition
 recognition of handwritten characters using a neural network
 
-Auteurs : Nicolas Morlier, Yoan Ladini, Raphaël Chauvet
+Auteurs : Nicolas Morlier
 
 prérequis :
 -python 3.6 ou supérieur (mais inférieur à 3.7)
